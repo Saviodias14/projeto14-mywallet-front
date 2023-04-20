@@ -4,19 +4,24 @@ import HomePage from "./pages/HomePage"
 import SignInPage from "./pages/SignInPage"
 import SignUpPage from "./pages/SignUpPage"
 import TransactionsPage from "./pages/TransactionPage"
+import Authorize from "./components/authorize"
+import { useState } from "react"
 
 export default function App() {
+  const [token, setToken] = useState(null);
   return (
-    <PagesContainer>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<SignInPage />} />
-          <Route path="/cadastro" element={<SignUpPage />} />
-          <Route path="/home" element={<HomePage />} />
-          <Route path="/nova-transacao/:tipo" element={<TransactionsPage />} />
-        </Routes>
-      </BrowserRouter>
-    </PagesContainer>
+    <Authorize.Provider value={{token, setToken}}>
+      <PagesContainer>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<SignInPage />} />
+            <Route path="/cadastro" element={<SignUpPage />} />
+            <Route path="/home" element={<HomePage />} />
+            <Route path="/nova-transacao/:tipo" element={<TransactionsPage />} />
+          </Routes>
+        </BrowserRouter>
+      </PagesContainer>
+    </Authorize.Provider>
   )
 }
 

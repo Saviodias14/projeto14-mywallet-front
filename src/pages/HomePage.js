@@ -1,47 +1,69 @@
 import styled from "styled-components"
 import { BiExit } from "react-icons/bi"
 import { AiOutlineMinusCircle, AiOutlinePlusCircle } from "react-icons/ai"
+import { useContext, useEffect, useState } from "react"
+import Authorize from "../components/authorize"
+import axios from "axios"
+import { useNavigate } from "react-router-dom"
+
+const url = "http://localhost:5000"
 
 export default function HomePage() {
+  const { token } = useContext(Authorize)
+  const [username, setUsername] = useState()
+  const [operations, setOperations] = useState([])
+  const [total, setTotal] = useState()
+  const navigate = useNavigate()
+  const config = { headers: { Authorization: `Bearer ${token}` } }
+  console.log(operations)
+  useEffect(() => {
+    axios.get(`${url}/home`, config)
+      .then((res) => {
+        setUsername(res.data.username)
+        setOperations([...res.data.operations])
+        let value = 0
+        res.data.operations.forEach(element => {
+          value += element.value
+        });
+        setTotal(value)
+      })
+      .catch(() => {
+        navigate("/")
+      })
+  }, [])
   return (
     <HomeContainer>
       <Header>
-        <h1>Olá, Fulano</h1>
+        <h1>Olá, {username}</h1>
         <BiExit />
       </Header>
 
       <TransactionsContainer>
         <ul>
-          <ListItemContainer>
-            <div>
-              <span>30/11</span>
-              <strong>Almoço mãe</strong>
-            </div>
-            <Value color={"negativo"}>120,00</Value>
-          </ListItemContainer>
-
-          <ListItemContainer>
-            <div>
-              <span>15/11</span>
-              <strong>Salário</strong>
-            </div>
-            <Value color={"positivo"}>3000,00</Value>
-          </ListItemContainer>
+          {operations.map((o) =>
+            <ListItemContainer key={o._id}>
+              <div>
+                <span>{o.date}</span>
+                <strong>{o.description}</strong>
+              </div>
+              <Value color={o.type === "entrada" ? "positivo" : "negativo"}>{o.value}</Value>
+            </ListItemContainer>
+          )}
         </ul>
 
         <article>
           <strong>Saldo</strong>
-          <Value color={"positivo"}>2880,00</Value>
+          <Value color={"positivo"}>{total}</Value>
         </article>
       </TransactionsContainer>
 
 
       <ButtonsContainer>
-        <button>
+        <button onClick={()=>navigate("/nova-transacao/entrada")}>
           <AiOutlinePlusCircle />
           <p>Nova <br /> entrada</p>
         </button>
-        <button>
+        <button onClick={()=>navigate("/nova-transacao/saida")}>
           <AiOutlineMinusCircle />
           <p>Nova <br />saída</p>
         </button>
@@ -67,6 +89,7 @@ const Header = styled.header`
 `
 const TransactionsContainer = styled.article`
   flex-grow: 1;
+  overflow:auto;
   background-color: #fff;
   color: #000;
   border-radius: 5px;
