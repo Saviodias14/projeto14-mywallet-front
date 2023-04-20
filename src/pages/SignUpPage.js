@@ -4,8 +4,6 @@ import MyWalletLogo from "../components/MyWalletLogo"
 import { useState } from "react"
 import axios from "axios"
 
-const url = "http://localhost:5000"
-
 export default function SignUpPage() {
   const [name, setName] = useState()
   const [email, setEmail] = useState()
@@ -14,7 +12,7 @@ export default function SignUpPage() {
   function cadastro(e){
     e.preventDefault()
     if(password!==confirmPassword) return alert("As senhas não são iguais!")
-    axios.post(`${url}/cadastro`,{name, email, password})
+    axios.post(`http://localhost:5000/cadastro`,{name, email, password})
     .then((res)=> {
       alert(res.data)
       setConfirmPassword("")

@@ -6,7 +6,6 @@ import Authorize from "../components/authorize"
 import axios from "axios"
 import { useNavigate } from "react-router-dom"
 
-const url = "http://localhost:5000"
 
 export default function HomePage() {
   const { token } = useContext(Authorize)
@@ -17,13 +16,14 @@ export default function HomePage() {
   const config = { headers: { Authorization: `Bearer ${token}` } }
   console.log(operations)
   useEffect(() => {
-    axios.get(`${url}/home`, config)
+    axios.get(`http://localhost:5000/home`, config)
       .then((res) => {
         setUsername(res.data.username)
         setOperations([...res.data.operations])
         let value = 0
         res.data.operations.forEach(element => {
-          value += element.value
+          element.type==="entrada"?value += element.value:value-=element.value
+          console.log(value)
         });
         setTotal(value)
       })

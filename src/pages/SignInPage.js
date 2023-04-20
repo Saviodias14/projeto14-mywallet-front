@@ -5,9 +5,6 @@ import { useContext, useState } from "react"
 import axios from "axios"
 import Authorize from "../components/authorize"
 
-
-const url = "http://localhost:5000"
-
 export default function SignInPage() {
   const [email, setEmail] = useState()
   const [password, setPassword] = useState()
@@ -15,7 +12,7 @@ export default function SignInPage() {
   const navigate = useNavigate()
   function login(e){
     e.preventDefault()
-    axios.post(url, {email, password})
+    axios.post("http://localhost:5000", {email, password})
     .then((res)=>{
       setEmail("")
       setPassword("")
