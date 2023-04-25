@@ -2,27 +2,28 @@ import styled from "styled-components"
 import { BiExit } from "react-icons/bi"
 import { AiOutlineMinusCircle, AiOutlinePlusCircle } from "react-icons/ai"
 import { useContext, useEffect, useState } from "react"
-import Authorize from "../components/authorize"
 import axios from "axios"
 import { useNavigate } from "react-router-dom"
 
 
 export default function HomePage() {
-  const { token } = useContext(Authorize)
   const [username, setUsername] = useState()
   const [operations, setOperations] = useState([])
   const [total, setTotal] = useState()
   const navigate = useNavigate()
-  const config = { headers: { Authorization: `Bearer ${token}` } }
-  console.log(operations)
+  const config = { headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem("autenticacao"))}` } }
+  console.log(JSON.parse(localStorage.getItem("autenticacao")))
   useEffect(() => {
-    axios.get(`http://localhost:5000/home`, config)
+    if (!localStorage.getItem("autenticacao")) {
+      navigate("/")
+    }
+    axios.get(`${process.env.REACT_APP_API_URL}/home`, config)
       .then((res) => {
         setUsername(res.data.username)
         setOperations([...res.data.operations])
         let value = 0
         res.data.operations.forEach(element => {
-          element.type==="entrada"?value += element.value:value-=element.value
+          element.type === "entrada" ? value += element.value : value -= element.value
           console.log(value)
         });
         setTotal(value)
@@ -35,7 +36,10 @@ export default function HomePage() {
     <HomeContainer>
       <Header>
         <h1>Olá, {username}</h1>
-        <BiExit />
+        <BiExit onClick={() => {
+          localStorage.removeItem("autenticacao")
+          navigate("/")
+        }} />
       </Header>
 
       <TransactionsContainer>
@@ -59,11 +63,11 @@ export default function HomePage() {
 
 
       <ButtonsContainer>
-        <button onClick={()=>navigate("/nova-transacao/entrada")}>
+        <button onClick={() => navigate("/nova-transacao/entrada")}>
           <AiOutlinePlusCircle />
           <p>Nova <br /> entrada</p>
         </button>
-        <button onClick={()=>navigate("/nova-transacao/saida")}>
+        <button onClick={() => navigate("/nova-transacao/saida")}>
           <AiOutlineMinusCircle />
           <p>Nova <br />saída</p>
         </button>

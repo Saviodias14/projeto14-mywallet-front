@@ -1,21 +1,24 @@
-import { useContext, useState } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import styled from "styled-components"
-import Authorize from "../components/authorize"
 import axios from "axios"
 
 export default function TransactionsPage() {
   const navigate = useNavigate()
-  const { token } = useContext(Authorize)
   const [value, setValue] = useState()
   const [description, setDescription] = useState()
   const { tipo } = useParams()
-  const config = { headers: { Authorization: `Bearer ${token}` } }
-  console.log(token)
+  const config = { headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem("autenticacao"))}` } }
+  
+  useEffect(()=>{
+    if(!JSON.parse(localStorage.getItem("autenticacao"))){
+      navigate("/")
+    }
+  },[])
   function transation(e) {
     e.preventDefault()
     const body = { value, description }
-    axios.post(`http://localhost:5000/nova-transacao/${tipo}`, body, config)
+    axios.post(`${process.env.REACT_APP_API_URL}/nova-transacao/${tipo}`, body, config)
       .then((res) => {
         alert("Transação adicionada com sucesso!")
         navigate("/home")

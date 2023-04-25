@@ -12,7 +12,7 @@ export default function SignUpPage() {
   function cadastro(e){
     e.preventDefault()
     if(password!==confirmPassword) return alert("As senhas não são iguais!")
-    axios.post(`http://localhost:5000/cadastro`,{name, email, password})
+    axios.post(`${process.env.REACT_APP_API_URL}/cadastro`,{name, email, password})
     .then((res)=> {
       alert(res.data)
       setConfirmPassword("")

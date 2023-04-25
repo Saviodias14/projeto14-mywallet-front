@@ -1,25 +1,29 @@
 import styled from "styled-components"
 import { Link, useNavigate } from "react-router-dom"
 import MyWalletLogo from "../components/MyWalletLogo"
-import { useContext, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import axios from "axios"
-import Authorize from "../components/authorize"
 
 export default function SignInPage() {
   const [email, setEmail] = useState()
   const [password, setPassword] = useState()
-  const {setToken} = useContext(Authorize)
   const navigate = useNavigate()
+  useEffect(()=>{
+    if(localStorage.getItem("autenticacao")){
+      console.log(localStorage.getItem("autenticacao"))
+      navigate("/home")
+    }
+  },[])
   function login(e){
     e.preventDefault()
-    axios.post("http://localhost:5000", {email, password})
+    axios.post(process.env.REACT_APP_API_URL, {email, password})
     .then((res)=>{
       setEmail("")
       setPassword("")
-      setToken(res.data)
+      localStorage.setItem("autenticacao", JSON.stringify(res.data))
       navigate("/home")
     })
-    .catch((err)=>alert(err.response.data))
+    .catch((err)=>console.log(err))
   }
   return (
     <SingInContainer>
