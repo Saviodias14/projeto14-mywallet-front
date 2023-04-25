@@ -57,7 +57,7 @@ export default function HomePage() {
 
         <article>
           <strong>Saldo</strong>
-          <Value color={"positivo"}>{total}</Value>
+          <Value color={total<0?"negativo":"positivo"}>{total}</Value>
         </article>
       </TransactionsContainer>
 
@@ -93,17 +93,28 @@ const Header = styled.header`
 `
 const TransactionsContainer = styled.article`
   flex-grow: 1;
-  overflow:auto;
+  overflow-y:auto;
+  overflow-x: hidden;
   background-color: #fff;
   color: #000;
   border-radius: 5px;
-  padding: 16px;
+  padding: 16px 16px 0 16px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  position:relative;
   article {
     display: flex;
-    justify-content: space-between;   
+    width:100%;
+    z-index:10;
+    background-color:#fff;
+    justify-content: space-between; 
+    padding: 8px 10px;
+    color: #000000;
+    position: sticky;
+    box-shadow: 0 -5px 5px -5px rgba(0,0,0,0.3);
+    bottom:0;
+    left:0;
     strong {
       font-weight: 700;
       text-transform: uppercase;
